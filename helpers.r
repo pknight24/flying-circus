@@ -1,4 +1,5 @@
 library(dplyr)
+library(purrr)
 
 pretty.print <- function (df, s = "1/1")
 {
@@ -24,4 +25,12 @@ pretty.print <- function (df, s = "1/1")
     }
   }
 
+}
+
+unwrap <- function(x) x[[1]]
+
+words.cleaner <- function(x)
+{
+  x %>% map((function(a) paste("@", a, "+"))) %>% paste(collapse=" ") %>% map(tolower) %>% unwrap %>% strsplit(" ") %>% unwrap
+  # NOTE: '@' represents the beginning of strings, '+' represents the end
 }
