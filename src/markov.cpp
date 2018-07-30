@@ -58,11 +58,30 @@ strings predict_helper(strings c, int n, NGramMap m)
    }
 }
 
-// [[Rcpp::export]]
 strings predictMC(strings c, std::string s, int n) //arguments:  corpus, starting string, number of strings to predict
 {
   NGramMap grams = buildMarkovChain(c);
   strings starting_point;
   starting_point.push_back(s);
   return predict_helper(starting_point, n, grams);
+}
+
+// [[Rcpp::export]]
+void runMain(strings speakers, strings ccorpus, strings bcorpus)
+{
+  strings line_labels = predictMC(speakers, "Background", 30);
+  for (int i = 0; i < line_labels.size();i++)
+  {
+    strings words;
+    if (line_labels.at(i) == "Character") words = predictMC(ccorpus, "@", 100);
+    else words = predictMC(bcorpus, "@", 100);
+
+    std::cout << line_labels.at(i) << ":\t";
+    for (int j = 0; j < words.size(); j++)
+    {
+      std::cout << words.at(j) << " ";
+    }
+
+    std::cout << std::endl;
+  }
 }
